@@ -1,0 +1,11 @@
+**/.DS_Store
+
+.vscode
+
+fortran-sdl2/
+lib/
+
+bin/*
+modules/*
+
+**/*.mod
