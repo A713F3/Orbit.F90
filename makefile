@@ -13,3 +13,9 @@ all:
 
 run:
 	./bin/main.out
+
+clean:
+	rm -f modules/*.mod
+	rm -f src/*.mod
+	rm -f *.mod
+	rm -f bin/main.out
