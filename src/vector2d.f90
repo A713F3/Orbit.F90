@@ -12,7 +12,7 @@ implicit none
     contains
         procedure :: distance
         procedure :: add
-        procedure :: add_constant
+        procedure :: mul
     end type
 
 contains
@@ -33,12 +33,12 @@ contains
         self%y = self%y + other%y
     end subroutine add
 
-    subroutine add_constant(self, constant)
+    subroutine mul(self, constant)
         class(vector2d), intent(inout) :: self
         real, intent(in)               :: constant
 
-        self%x = self%x + constant
-        self%y = self%y + constant
-    end subroutine add_constant
+        self%x = self%x * constant
+        self%y = self%y * constant
+    end subroutine mul
 
 end module vector2d_mod

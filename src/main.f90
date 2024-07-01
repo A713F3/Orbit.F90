@@ -22,7 +22,7 @@ program main
     integer         :: rc, i
     character(len=15) :: window_title
 
-    integer :: EULER_STEP_SIZE = 10000
+    integer :: EULER_STEP_SIZE = 10
 
     integer(kind=c_int) :: mouse_x, mouse_y
     integer :: tick_a, tick_b, delta

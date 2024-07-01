@@ -7,10 +7,12 @@
 
 module circle_mod
     use :: sdl2
+    use :: vector2d_mod
     implicit none
 
     type :: sdl_circle
-        real :: x, y, r
+        type(vector2d) :: pos
+        real :: r
     contains
         procedure :: render      => sdl_render_draw_circle
         procedure :: render_fill => sdl_render_fill_circle
@@ -20,14 +22,14 @@ module circle_mod
 
     function sdl_render_draw_circle(circle, renderer)
         class(sdl_circle), intent(in) :: circle
-        type(c_ptr), intent(out)     :: renderer
-        integer(kind=c_int)          :: sdl_render_draw_circle
+        type(c_ptr), intent(out)      :: renderer
+        integer(kind=c_int)           :: sdl_render_draw_circle
         
         integer :: center_x, center_y, radius
         integer :: diameter, x, y, tx, ty, error, rc
 
-        center_x = int(circle%x)
-        center_y = int(circle%y)
+        center_x = int(circle%pos%x)
+        center_y = int(circle%pos%y)
         radius = int(circle%r)
 
         diameter = radius * 2
@@ -72,8 +74,8 @@ module circle_mod
         integer :: center_x, center_y, radius
         integer :: offsetx, offsety, d, rc
 
-        center_x = int(circle%x)
-        center_y = int(circle%y)
+        center_x = int(circle%pos%x)
+        center_y = int(circle%pos%y)
         radius = int(circle%r)
 
         offsetx = 0
