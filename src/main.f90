@@ -19,9 +19,13 @@ program main
     type(c_ptr)     :: window
     type(c_ptr)     :: renderer
     type(sdl_event) :: event
-    integer         :: rc
+    integer         :: rc, i
+    character(len=15) :: window_title
+
+    integer :: EULER_STEP_SIZE = 10000
 
     integer(kind=c_int) :: mouse_x, mouse_y
+    integer :: tick_a, tick_b, delta
 
     ! Initialise SDL.
     if (sdl_init(SDL_INIT_VIDEO) < 0) then
@@ -47,10 +51,11 @@ program main
 
     call init_simulation()
 
-    call add_planet(100, 100)
-
     ! Main loop.
     do while (.true.)
+        tick_a = sdl_get_ticks()
+        delta = tick_a - tick_b
+
         if (sdl_poll_event(event) > 0) then
             select case (event%type)
                 case (SDL_QUITEVENT)
@@ -59,7 +64,7 @@ program main
                 case (SDL_MOUSEBUTTONDOWN)
                     rc = sdl_get_mouse_state(mouse_x, mouse_y)
 
-                    call add_planet(mouse_x, mouse_y)
+                    call add_planet(real(mouse_x), real(mouse_y))
             end select
         end if
 
@@ -70,12 +75,19 @@ program main
 
         rc = sdl_set_render_draw_color(renderer, uint8(100), uint8(100), uint8(100), uint8(SDL_ALPHA_OPAQUE))
         rc = render_simulation(renderer)
-        call simulate()
 
+        do i=1, EULER_STEP_SIZE
+            call simulate(real(1.0/EULER_STEP_SIZE))
+        end do
+
+        tick_b = tick_a
         ! Render to window.
         call sdl_render_present(renderer)
 
-        call sdl_delay(20)
+        write (window_title, "(A5, I10)") "FPS: ", int(1000/delta)
+        call sdl_set_window_title(window, window_title)
+
+        call sdl_delay(10)
     end do
 
     ! Quit.

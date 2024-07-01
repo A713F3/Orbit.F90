@@ -10,7 +10,7 @@ module circle_mod
     implicit none
 
     type :: sdl_circle
-        integer :: x, y, r
+        real :: x, y, r
     contains
         procedure :: render      => sdl_render_draw_circle
         procedure :: render_fill => sdl_render_fill_circle
@@ -26,9 +26,9 @@ module circle_mod
         integer :: center_x, center_y, radius
         integer :: diameter, x, y, tx, ty, error, rc
 
-        center_x = circle%x
-        center_y = circle%y
-        radius = circle%r
+        center_x = int(circle%x)
+        center_y = int(circle%y)
+        radius = int(circle%r)
 
         diameter = radius * 2
         x = radius - 1
@@ -72,9 +72,9 @@ module circle_mod
         integer :: center_x, center_y, radius
         integer :: offsetx, offsety, d, rc
 
-        center_x = circle%x
-        center_y = circle%y
-        radius = circle%r
+        center_x = int(circle%x)
+        center_y = int(circle%y)
+        radius = int(circle%r)
 
         offsetx = 0
         offsety = radius

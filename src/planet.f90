@@ -11,14 +11,15 @@ use :: circle_mod
 implicit none
 
     type :: planet
-        integer :: mass
+        real :: mass
         type(sdl_circle) :: object
     contains
         procedure :: render
         procedure :: attract
+        procedure :: colliding
     end type
 
-    real :: G = 10
+    real :: G = 10.0
 
 contains
 
@@ -35,8 +36,7 @@ contains
         class(planet), intent(in) :: self
         class(planet), intent(in) :: other_planet
         real :: force, r
-
-        integer :: x1, x2, y1, y2
+        real :: x1, x2, y1, y2
 
         x1 = self%object%x
         y1 = self%object%y
@@ -44,11 +44,32 @@ contains
         x2 = other_planet%object%x
         y2 = other_planet%object%y
 
-        r = sqrt(real( (x1 - x2)**2 +  (y1 - y2)**2 ))
+        r = sqrt( (x1 - x2)**2 +  (y1 - y2)**2 )
 
         force = G * (self%mass * other_planet%mass) / (r*r)
 
     end function attract
+
+    function colliding(self, other_planet) result(is_collided)
+        class(planet), intent(in)  :: self
+        class(planet), intent(in)  :: other_planet
+        logical                    :: is_collided
+
+        real :: r1, r2, x1, x2, y1, y2, distance
+
+        x1 = self%object%x
+        y1 = self%object%y
+        r1 = self%object%r
+
+        x2 = other_planet%object%x
+        y2 = other_planet%object%y
+        r2 = other_planet%object%r
+
+        distance = sqrt( (x1 - x2)**2 +  (y1 - y2)**2 )
+
+        is_collided = distance .le. (r1 + r2)
+
+    end function colliding
 
 
 end module planet_mod
