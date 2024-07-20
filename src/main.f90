@@ -11,6 +11,7 @@ program main
     use :: sdl2
     use :: circle_mod
     use :: simulation
+    use :: vector2d_mod
     implicit none
 
     integer, parameter :: SCREEN_WIDTH  = 640
@@ -19,10 +20,10 @@ program main
     type(c_ptr)     :: window
     type(c_ptr)     :: renderer
     type(sdl_event) :: event
-    integer         :: rc, i
+    integer         :: rc, i, j = 1
     character(len=15) :: window_title
 
-    integer :: EULER_STEP_SIZE = 10
+    integer :: EULER_STEP_SIZE = 1
 
     integer(kind=c_int) :: mouse_x, mouse_y
     integer :: tick_a, tick_b, delta
@@ -64,7 +65,9 @@ program main
                 case (SDL_MOUSEBUTTONDOWN)
                     rc = sdl_get_mouse_state(mouse_x, mouse_y)
 
-                    call add_planet(real(mouse_x), real(mouse_y))
+                    call add_planet(pos=vector2d(x=mouse_x, y=mouse_y), &
+                                    velo=vector2d(x=j * 2, y=0))
+                    j = -1 * j
             end select
         end if
 
@@ -81,6 +84,7 @@ program main
         end do
 
         tick_b = tick_a
+
         ! Render to window.
         call sdl_render_present(renderer)
 

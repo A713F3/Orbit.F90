@@ -12,7 +12,10 @@ implicit none
     contains
         procedure :: distance
         procedure :: add
+        procedure :: sub
         procedure :: mul
+        procedure :: dot
+        procedure :: norm
     end type
 
 contains
@@ -25,20 +28,46 @@ contains
         distance = sqrt(real( (self%x - other%x)**2 +  (self%y - other%y)**2 ))
     end function distance
 
-    subroutine add(self, other)
+    function add(self, other) result(res)
         class(vector2d), intent(inout) :: self
         class(vector2d), intent(in)    :: other
+        type(vector2d)                 :: res
 
-        self%x = self%x + other%x
-        self%y = self%y + other%y
-    end subroutine add
+        res%x = self%x + other%x
+        res%y = self%y + other%y
+    end function add
 
-    subroutine mul(self, constant)
+    function sub(self, other) result(res)
+        class(vector2d), intent(inout) :: self
+        class(vector2d), intent(in)    :: other
+        type(vector2d)                 :: res
+
+        res%x = self%x - other%x
+        res%y = self%y - other%y
+    end function sub
+
+    function mul(self, constant) result(res)
         class(vector2d), intent(inout) :: self
         real, intent(in)               :: constant
+        type(vector2d)                 :: res
 
-        self%x = self%x * constant
-        self%y = self%y * constant
-    end subroutine mul
+        res%x = self%x * constant
+        res%y = self%y * constant
+    end function mul
+
+    function dot(self, other) result(res)
+        class(vector2d), intent(inout) :: self
+        class(vector2d), intent(in)    :: other
+        type(real)                     :: res
+
+        res = (self%x * other%x) + (self%y * other%y)
+    end function dot
+
+    function norm(self) result(res)
+        class(vector2d), intent(inout) :: self
+        type(real)                     :: res
+
+        res = sqrt((self%x ** 2 )+ (self%y ** 2))
+    end function norm
 
 end module vector2d_mod

@@ -1,3 +1,10 @@
+! simulation.f90
+!
+! Simulation definitions.
+!
+! Author:  Ali Efe Karagul
+! GitHub:  https://github.com/A713F3/Orbit.F90
+
 module simulation
 use :: sdl2
 use :: planet_mod
@@ -12,13 +19,14 @@ contains
         allocate(planets(0))
     end subroutine init_simulation
 
-    subroutine add_planet(x, y)
-        real, intent(in) :: x, y  
+    subroutine add_planet(pos, velo)
+        type(vector2d), intent(in) :: pos, velo
         type(planet), allocatable :: temp(:)
         type(planet) :: new_planet
 
-        new_planet%object = sdl_circle(pos=vector2d(x=x, y=y), r=20)
-        new_planet%mass = 50.0
+        new_planet%object = sdl_circle(pos=pos, r=20)
+        new_planet%mass = 10.0
+        new_planet%velo = velo
 
         allocate(temp(size(planets) + 1))
 
@@ -33,25 +41,28 @@ contains
     subroutine simulate(EULER_COEFF)
         real, intent(in) :: EULER_COEFF
         integer :: i, j
-        type(planet), pointer :: planet1, planet2
 
         do i = 1, size(planets)
             do j = 1, size(planets)
                 if (i .eq. j) cycle
 
-                planet1 => planets(i)
-                planet2 => planets(j)
-
-                call planet1%attract(planet2, EULER_COEFF)
+                call planets(i)%attract(planets(j), EULER_COEFF)
 
                 ! check out of bounds
 
             end do
         end do
 
-        do i = 1, size(planets)
+        do i = 1, size(planets) - 1
+            do j = i + 1, size(planets)
+                call planets(i)%collide(planets(j))
+            end do
+        end do
+
+        do i = 1, size(planets) 
             call planets(i)%move(EULER_COEFF)
         end do
+
     end subroutine
 
     function render_simulation(renderer) result(rc)
@@ -60,8 +71,6 @@ contains
 
         do i = 1, size(planets)
             rc = planets(i)%render(renderer)
-
-            !write(*,*) "x: ", planets(i)%object%x, "y: ", planets(i)%object%y 
         end do
     end function
 
